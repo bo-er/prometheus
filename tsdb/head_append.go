@@ -416,7 +416,6 @@ func (a *headAppender) AppendHistogram(ref storage.SeriesRef, lset labels.Labels
 		}
 		s.histogramSeries = true
 		if created {
-			a.head.metrics.histogramSeries.Inc()
 			a.series = append(a.series, record.RefSeries{
 				Ref:    s.ref,
 				Labels: lset,
