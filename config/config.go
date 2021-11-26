@@ -364,6 +364,12 @@ type ScrapeConfig struct {
 	RelabelConfigs []*relabel.Config `yaml:"relabel_configs,omitempty"`
 	// List of metric relabel configurations.
 	MetricRelabelConfigs []*relabel.Config `yaml:"metric_relabel_configs,omitempty"`
+	FileSDConfig         []*FileSDConfig   `yaml:"file_sd_configs"`
+}
+
+type FileSDConfig struct {
+	Files           []string `yaml:"files"`
+	RefreshInterval string   `yaml:"refresh_interval"`
 }
 
 // SetDirectory joins any relative file paths with dir.
