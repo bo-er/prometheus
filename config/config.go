@@ -369,7 +369,7 @@ type ScrapeConfig struct {
 
 type FileSDConfig struct {
 	Files           []string `yaml:"files"`
-	RefreshInterval string   `yaml:"refresh_interval"`
+	RefreshInterval string   `yaml:"refresh_interval,omitempty"`
 }
 
 // SetDirectory joins any relative file paths with dir.
