@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
+	"github.com/prometheus/prometheus/util/bfile"
 	"hash"
 	"hash/crc32"
 	"io"
@@ -135,7 +136,7 @@ type Writer struct {
 
 	numSymbols  int
 	symbols     *Symbols
-	symbolFile  *fileutil.MmapFile
+	symbolFile  *bfile.Pager
 	lastSymbol  string
 	symbolCache map[string]symbolCacheEntry
 
@@ -548,7 +549,7 @@ func (w *Writer) finishSymbols() error {
 		return err
 	}
 
-	sf, err := fileutil.OpenMmapFile(w.f.name)
+	sf, err := bfile.OpenPager(w.f.name)
 	if err != nil {
 		return err
 	}
@@ -574,7 +575,7 @@ func (w *Writer) writeLabelIndices() error {
 	}
 
 	// Find all the label values in the tmp posting offset table.
-	f, err := fileutil.OpenMmapFile(w.fPO.name)
+	f, err := bfile.OpenPager(w.fPO.name)
 	if err != nil {
 		return err
 	}
@@ -741,7 +742,7 @@ func (w *Writer) writePostingsOffsetTable() error {
 		return err
 	}
 
-	f, err := fileutil.OpenMmapFile(w.fPO.name)
+	f, err := bfile.OpenPager(w.fPO.name)
 	if err != nil {
 		return err
 	}
@@ -825,7 +826,7 @@ func (w *Writer) writePostingsToTmpFiles() error {
 	if err := w.f.Flush(); err != nil {
 		return err
 	}
-	f, err := fileutil.OpenMmapFile(w.f.name)
+	f, err := bfile.OpenPager(w.f.name)
 	if err != nil {
 		return err
 	}
@@ -1114,7 +1115,7 @@ func NewReader(b ByteSlice) (*Reader, error) {
 
 // NewFileReader returns a new index reader against the given index file.
 func NewFileReader(path string) (*Reader, error) {
-	f, err := fileutil.OpenMmapFile(path)
+	f, err := bfile.OpenPager(path)
 	if err != nil {
 		return nil, err
 	}

@@ -527,22 +527,11 @@ Loop:
 		case <-db.stopc:
 			break Loop
 		case <-time.After(db.opts.TruncateFrequency):
-			// The timestamp ts is used to determine which series are not receiving
-			// samples and may be deleted from the WAL. Their most recent append
-			// timestamp is compared to ts, and if that timestamp is older then ts,
-			// they are considered inactive and may be deleted.
-			//
-			// Subtracting a duration from ts will add a buffer for when series are
-			// considered inactive and safe for deletion.
 			ts := db.rs.LowestSentTimestamp() - db.opts.MinWALTime
 			if ts < 0 {
 				ts = 0
 			}
 
-			// Network issues can prevent the result of getRemoteWriteTimestamp from
-			// changing. We don't want data in the WAL to grow forever, so we set a cap
-			// on the maximum age data can be. If our ts is older than this cutoff point,
-			// we'll shift it forward to start deleting very stale data.
 			if maxTS := timestamp.FromTime(time.Now()) - db.opts.MaxWALTime; ts < maxTS {
 				ts = maxTS
 			}

@@ -17,6 +17,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/prometheus/prometheus/util/bfile"
 	"io"
 	"math"
 	"os"
@@ -41,7 +42,6 @@ import (
 	"github.com/prometheus/prometheus/tsdb"
 	"github.com/prometheus/prometheus/tsdb/chunks"
 	tsdb_errors "github.com/prometheus/prometheus/tsdb/errors"
-	"github.com/prometheus/prometheus/tsdb/fileutil"
 )
 
 const timeDelta = 30000
@@ -673,7 +673,7 @@ func checkErr(err error) int {
 }
 
 func backfillOpenMetrics(path, outputDir string, humanReadable, quiet bool, maxBlockDuration time.Duration) int {
-	inputFile, err := fileutil.OpenMmapFile(path)
+	inputFile, err := bfile.OpenPager(path)
 	if err != nil {
 		return checkErr(err)
 	}

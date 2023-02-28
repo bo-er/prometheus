@@ -17,6 +17,7 @@ import (
 	"bufio"
 	"encoding/binary"
 	"fmt"
+	"github.com/prometheus/prometheus/util/bfile"
 	"hash"
 	"hash/crc32"
 	"io"
@@ -534,7 +535,7 @@ func NewDirReader(dir string, pool chunkenc.Pool) (*Reader, error) {
 		cs []io.Closer
 	)
 	for _, fn := range files {
-		f, err := fileutil.OpenMmapFile(fn)
+		f, err := bfile.OpenPager(fn)
 		if err != nil {
 			return nil, tsdb_errors.NewMulti(
 				errors.Wrap(err, "mmap files"),

@@ -17,6 +17,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
+	"github.com/prometheus/prometheus/util/bfile"
 	"hash"
 	"io"
 	"os"
@@ -298,7 +299,7 @@ func (cdm *ChunkDiskMapper) openMMapFiles() (returnErr error) {
 
 	chkFileIndices := make([]int, 0, len(files))
 	for seq, fn := range files {
-		f, err := fileutil.OpenMmapFile(fn)
+		f, err := bfile.OpenPager(fn)
 		if err != nil {
 			return errors.Wrapf(err, "mmap files, file: %s", fn)
 		}
